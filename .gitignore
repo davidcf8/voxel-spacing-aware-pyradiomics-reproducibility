@@ -9,5 +9,10 @@ build/
 dist/
 .venv/
 .env
+.repro_build/
+.repro_env/
+.repro_pyradiomics/
 reproduced_results/
+results/rerun/
+results/reproduction_environment.json
 *.log

@@ -1,0 +1,8 @@
+numpy==2.2.6
+pandas>=2.0,<3
+SimpleITK==2.5.5
+PyWavelets>=1.6,<2
+pykwalify>=1.8,<2
+six>=1.16,<2
+pytest==8.4.2
+setuptools>=70

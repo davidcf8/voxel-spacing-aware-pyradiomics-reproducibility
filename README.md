@@ -38,9 +38,49 @@ reproduced_results/REPRODUCIBILITY_REPORT.md
 reproduced_results/reproducibility_checks.csv
 ```
 
-## Optional Full Regeneration
+This is the lightweight published-output verification workflow. It verifies the manuscript numbers against the frozen machine-readable CSV/JSON outputs included in the repository.
 
-The included CSV/JSON/NIfTI files are sufficient for audit reproduction. Full feature re-extraction requires a compiled local PyRadiomics environment. Use the scripts under `experiments/` as reference entry points, but they are not needed for the default offline check.
+## End-to-End Regeneration
+
+For full local regeneration from the included synthetic NIfTI phantoms, install the reproducibility dependencies and run:
+
+```bash
+python -m pip install -r requirements-repro.txt
+python rerun_experiments.py
+```
+
+This workflow:
+
+- reconstructs the upstream PyRadiomics source tree at commit `8ed579383b44806651c463d5e691f3b2b57522ab`;
+- overlays only the local paper implementation from `implementation/radiomics/`;
+- builds the compiled `_cmatrices` and `_cshape` extensions in `.repro_build/`;
+- verifies that imports come from the local reproduction build;
+- reruns the synthetic experiments from `.nii.gz` phantoms;
+- writes regenerated outputs under `results/rerun/`;
+- compares regenerated outputs with the frozen published outputs;
+- runs `python reproduce_paper.py` as the final published-result verification.
+
+Expected final output:
+
+```text
+End-to-end rerun: PASS
+Published-result verification: PASS
+Overall status: PASS
+```
+
+Useful options:
+
+```bash
+python rerun_experiments.py --clean
+python rerun_experiments.py --skip-build
+python rerun_experiments.py --upstream-source /path/to/pyradiomics
+python rerun_experiments.py --run-upstream-tests
+python rerun_experiments.py --verbose
+```
+
+The default runner first looks for a local PyRadiomics source tree containing the required commit. If unavailable, it attempts to clone the official upstream repository and checks out the exact commit. The separate upstream PR-preparation repository is not required and should not be used for this workflow.
+
+`results/rerun/`, `.repro_build/`, `.repro_pyradiomics/`, and `results/reproduction_environment.json` are generated local artifacts and are intentionally ignored by Git because they contain machine-specific build paths.
 
 ## Repository Layout
 
@@ -58,6 +98,7 @@ results/
 tests/
 AUDIT/
 reproduce_paper.py
+rerun_experiments.py
 ```
 
 ## Expected Key Results
