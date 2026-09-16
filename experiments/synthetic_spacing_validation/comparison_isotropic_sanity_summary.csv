@@ -1,0 +1,2 @@
+check,n_features_compared,mean_abs_difference,max_abs_difference,n_changed_strict,n_changed_abs_1e_5
+modified default isotropic vs modified voxelSpacing isotropic,75,0.0,0.0,0,0

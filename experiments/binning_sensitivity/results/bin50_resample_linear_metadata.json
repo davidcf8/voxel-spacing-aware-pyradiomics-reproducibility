@@ -1,0 +1,22 @@
+{
+  "variant": "original",
+  "method": "resample_linear",
+  "weightingNorm": "default",
+  "binWidth": 50.0,
+  "n_features": 75,
+  "image_spacing_xyz": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "mask_spacing_xyz": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "radiomics_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/original/radiomics/__init__.py",
+  "cmatrices_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/original/radiomics/_cmatrices.cpython-310-darwin.so",
+  "cshape_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/original/radiomics/_cshape.cpython-310-darwin.so",
+  "image": "<REPOSITORY_ROOT>/experiments/binning_sensitivity/data/z5_resample_linear_image.nii.gz",
+  "mask": "<REPOSITORY_ROOT>/experiments/binning_sensitivity/data/z5_resample_linear_mask.nii.gz"
+}

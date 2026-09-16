@@ -1,0 +1,25 @@
+{
+  "variant": "modified_default_isotropic",
+  "weightingNorm": "default",
+  "python": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/.venv_modified/bin/python",
+  "python_version": "3.10.9 (main, Jan 11 2023, 09:18:18) [Clang 14.0.6 ]",
+  "machine": "arm64",
+  "platform": "macOS-14.6.1-arm64-arm-64bit",
+  "expected_source": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/build_sources/modified/radiomics",
+  "radiomics_file": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/build_sources/modified/radiomics/__init__.py",
+  "cmatrices_file": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/build_sources/modified/radiomics/_cmatrices.cpython-310-darwin.so",
+  "cshape_file": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/build_sources/modified/radiomics/_cshape.cpython-310-darwin.so",
+  "image": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/synthetic_isotropic_image.nii.gz",
+  "mask": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/synthetic_isotropic_mask.nii.gz",
+  "image_spacing": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "mask_spacing": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "n_features": 75
+}

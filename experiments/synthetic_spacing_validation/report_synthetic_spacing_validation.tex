@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\title{Synthetic Spacing Validation of Voxel-Spacing-Aware PyRadiomics}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Rationale}
+This controlled experiment tests software behavior in a synthetic anisotropic image. It compares original PyRadiomics, the modified implementation in default mode, and the modified implementation with \texttt{weightingNorm=voxelSpacing}. The experiment is not a clinical validation study.
+
+\section*{Synthetic Image}
+A deterministic 3D image of size $40 \times 40 \times 20$ voxels was generated with a cuboid ROI, a smooth intensity gradient along $x$, alternating bands along $z$, and small fixed-seed noise. Anisotropic spacing was set to $(1.0, 1.0, 5.0)$ in SimpleITK $(x,y,z)$ convention; an isotropic copy used $(1.0,1.0,1.0)$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{synthetic_image_slices.pdf}
+\caption{Representative slices of the synthetic image with ROI overlay.}
+\end{figure}
+
+\section*{Environment Verification}
+\input{table_import_paths.tex}
+
+\section*{Backward Compatibility}
+\input{table_backward_compatibility.tex}
+
+\section*{Voxel-Spacing Activation}
+\input{table_voxelSpacing_activation.tex}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{feature_difference_summary.pdf}
+\caption{Percentage of texture features changing after activating voxel-spacing-aware extraction in the anisotropic image.}
+\end{figure}
+
+\section*{Isotropic Sanity Check}
+\input{table_isotropic_sanity.tex}
+
+\section*{Interpretation}
+This validation demonstrates software behavior and activation of spacing-aware execution paths under controlled conditions. It does not assess clinical performance. Identical default results between original and modified implementations support backward compatibility. The anisotropic \texttt{voxelSpacing} comparison shows activation of the corrected spacing-aware texture computations, while the isotropic comparison confirms that \texttt{voxelSpacing} now reduces to standard behavior when voxel spacing is equal across axes. This supports the intended implementation principle: spacing-aware extraction should correct anisotropic geometric interpretation without injecting an additional weighting artifact into isotropic data.
+
+\end{document}

@@ -1,0 +1,23 @@
+{
+  "variant": "modified",
+  "method": "voxel_spacing_aware",
+  "weightingNorm": "voxelSpacing",
+  "binWidth": 25.0,
+  "n_features": 75,
+  "tracemalloc_peak_mb": 39.894057273864746,
+  "image_spacing_xyz": [
+    1.0,
+    1.0,
+    3.0
+  ],
+  "mask_spacing_xyz": [
+    1.0,
+    1.0,
+    3.0
+  ],
+  "radiomics_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/modified/radiomics/__init__.py",
+  "cmatrices_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/modified/radiomics/_cmatrices.cpython-310-darwin.so",
+  "cshape_file": "<REPOSITORY_ROOT>/experiments/additional_validation_runtime/build_sources/modified/radiomics/_cshape.cpython-310-darwin.so",
+  "image": "<REPOSITORY_ROOT>/experiments/computational_profiling/data/large_z3p0_y1p0_x1p0_image.nii.gz",
+  "mask": "<REPOSITORY_ROOT>/experiments/computational_profiling/data/large_z3p0_y1p0_x1p0_mask.nii.gz"
+}

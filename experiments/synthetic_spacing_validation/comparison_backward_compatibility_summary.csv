@@ -1,0 +1,2 @@
+check,n_features_compared,mean_abs_difference,max_abs_difference,n_changed_strict,n_changed_abs_1e_5
+original anisotropic vs modified default anisotropic,75,0.0,0.0,0,0

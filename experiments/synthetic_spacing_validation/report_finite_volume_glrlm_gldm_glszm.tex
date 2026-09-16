@@ -1,0 +1,175 @@
+\section{Finite-volume voxel-spacing-aware texture matrices}
+
+\subsection{Rationale}
+
+The final implementation uses a finite-volume, zero-order-hold representation for selected texture families when
+\texttt{weightingNorm = voxelSpacing} is explicitly enabled. The purpose is to preserve the native acquired signal
+while representing anisotropic voxels on an isotropic physical lattice before matrix construction. This separates
+geometric correction from interpolation-induced signal modification: voxel intensities are not smoothed, mixed, or
+interpolated, but an anisotropic voxel is represented by repeated subcells with the same discretized gray level.
+
+Let the image-array spacing be
+\[
+s = (\Delta_z,\Delta_y,\Delta_x),
+\]
+and define the finest spacing unit
+\[
+h = \min(\Delta_z,\Delta_y,\Delta_x).
+\]
+For each axis, the finite-volume expansion factor is
+\[
+r_k = \mathrm{round}\left(\frac{\Delta_k}{h}\right), \qquad k \in \{z,y,x\}.
+\]
+The expanded image $\tilde I$ and mask $\tilde M$ are obtained by zero-order repetition of each original voxel along
+axis $k$ by $r_k$ subcells. For the synthetic anisotropic experiment with SimpleITK spacing
+\[
+(\Delta_x,\Delta_y,\Delta_z)=(1,1,5)\,\mathrm{mm},
+\]
+the array-order spacing is $(5,1,1)$ and the expansion factor is $(5,1,1)$.
+
+\subsection{Feature-family behavior}
+
+\paragraph{GLRLM.}
+The gray-level run length matrix is computed using the standard PyRadiomics backend on the finite-volume
+representation $\tilde I$. Run length remains an integer count, but it now counts subcells on the isotropic physical
+lattice rather than native anisotropic index voxels. Therefore, a continuous run through a 5-mm slice direction is
+represented by five 1-mm subcell steps. Diagonal directions are handled by the standard GLRLM angle generation after
+finite-volume expansion; no additional radius rule or angular weighting is introduced.
+
+\paragraph{GLDM.}
+The gray-level dependence matrix is likewise computed by the standard GLDM backend on $\tilde I$. Dependence size
+remains an integer count of neighboring subcells satisfying the gray-level dependence criterion. This avoids the
+previous weighted-dependence construction, which introduced a continuous dependence quantity that then had to be
+mapped back to a discrete matrix axis.
+
+\paragraph{GLSZM.}
+The gray-level size zone matrix is computed by the standard connected-component algorithm on $\tilde I$. Zone size
+remains an integer count, but the count is now measured in isotropic subcells. This is physically preferable to
+leaving GLSZM entirely insensitive to voxel anisotropy, because a connected zone spanning thick slices represents a
+larger physical volume than the same native voxel count in an isotropic image. Importantly, topology and connectivity
+rules remain the standard GLSZM rules; the modification affects the finite-volume representation used before zone
+matrix construction, not the feature formulas.
+
+\subsection{Implementation summary}
+
+The implementation was applied to \texttt{radiomics\_modificado\_corregido}. The following behavior is enforced:
+\begin{itemize}
+  \item If \texttt{weightingNorm} is disabled, the modified library follows standard PyRadiomics behavior.
+  \item If \texttt{weightingNorm = voxelSpacing} and spacing is isotropic, the extraction reduces exactly to standard
+  behavior.
+  \item If \texttt{weightingNorm = voxelSpacing} and spacing is anisotropic, GLRLM, GLDM and GLSZM matrices are
+  computed after finite-volume zero-order-hold expansion.
+  \item Voxel-based extraction for these finite-volume modes is intentionally not enabled in the current prototype.
+\end{itemize}
+
+\subsection{Synthetic validation}
+
+The validation used a deterministic synthetic 3D image with a masked cuboid/spherical region, a smooth in-plane
+gradient, through-plane alternating bands and fixed random perturbation. Texture features were extracted with
+resampling disabled and original image type only. The compared texture families were GLCM, GLRLM, GLDM, GLSZM and
+NGTDM. The experiment used isolated Python environments for the original and modified libraries, with separately
+compiled C extensions.
+
+\begin{table}[htbp]
+\centering
+\caption{Environment and import-path validation.}
+\begin{tabular}{lll}
+\hline
+Library & Python / platform & Imported radiomics path \\
+\hline
+Original & Python 3.10.9, macOS arm64 &
+\texttt{build\_sources/original/radiomics/\_\_init\_\_.py} \\
+Modified corrected & Python 3.10.9, macOS arm64 &
+\texttt{build\_sources/modified/radiomics/\_\_init\_\_.py} \\
+\hline
+\end{tabular}
+\end{table}
+
+Both libraries imported their own compiled extensions:
+\texttt{\_cmatrices.cpython-310-darwin.so} and \texttt{\_cshape.cpython-310-darwin.so}. This confirms that the
+comparison did not mix original and modified PyRadiomics imports.
+
+\begin{table}[htbp]
+\centering
+\caption{Backward compatibility check: original PyRadiomics versus modified library in default mode.}
+\begin{tabular}{lrrrr}
+\hline
+Comparison & Features & Mean absolute difference & Maximum absolute difference & Changed features \\
+\hline
+Original anisotropic vs modified default anisotropic & 75 & 0.000000 & 0.000000 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Activation of \texttt{weightingNorm = voxelSpacing} under anisotropic spacing.}
+\begin{tabular}{lrrrrr}
+\hline
+Family & Features & Changed & Changed at $10^{-5}$ & Median absolute difference & Median relative difference \\
+\hline
+GLCM  & 24 & 24 & 24 & 0.095800 & 0.101046 \\
+GLDM  & 14 & 11 & 11 & 0.117819 & 0.491003 \\
+GLRLM & 16 & 16 & 16 & 0.468669 & 0.260970 \\
+GLSZM & 16 &  8 &  8 & 0.002072 & 0.400000 \\
+NGTDM &  5 &  5 &  5 & 0.022053 & 0.335726 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Isotropic sanity check: modified default versus modified \texttt{voxelSpacing} on isotropic spacing.}
+\begin{tabular}{lrrrr}
+\hline
+Comparison & Features & Mean absolute difference & Maximum absolute difference & Changed features \\
+\hline
+Modified default isotropic vs modified voxelSpacing isotropic & 75 & 0.000000 & 0.000000 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Interpretation}
+
+The finite-volume implementation preserves backward compatibility exactly in default mode and preserves exact
+isotropic equivalence when \texttt{weightingNorm = voxelSpacing}. Under anisotropic spacing, the expected families
+activate. GLRLM changes in all evaluated features because run lengths are now measured on the finite-volume lattice.
+GLDM changes primarily in dependence-size-sensitive features, while purely gray-level terms remain unchanged. GLSZM
+changes selectively: features based on zone size or zone percentage change, whereas features depending only on the
+number or distribution of gray levels and zones remain unchanged. This selectivity is physically coherent and supports
+the interpretation that the implementation modifies geometric representation rather than globally perturbing all
+biomarkers.
+
+\subsection{Computational implications}
+
+The principal computational cost is the finite-volume expansion factor
+\[
+R = r_z r_y r_x.
+\]
+For spacing $(5,1,1)$ in array order, $R=5$. Thus, memory use for the temporary image and mask and the computational
+load of matrix construction increase approximately five-fold before considering feature-family-specific matrix axes.
+GLRLM may also require a larger maximum run-length axis, and GLSZM may require a larger maximum zone-size axis because
+the expanded mask contains more subcells. For typical anisotropic CT or MRI with one thick through-plane axis, this is
+usually a linear increase of roughly $\Delta_\mathrm{thick}/\Delta_\mathrm{thin}$. Highly anisotropic or multi-axis
+non-isotropic data can become substantially heavier, and production code should include a clear warning or guard when
+$R$ is large.
+
+\subsection{Manuscript-ready wording}
+
+In the final voxel-spacing-aware mode, GLRLM, GLDM and GLSZM were computed after representing the native anisotropic
+voxel grid as an isotropic finite-volume lattice using zero-order hold. This operation preserves native gray-level
+values and avoids interpolation-induced smoothing. The subsequent texture matrices are then computed using the
+standard PyRadiomics matrix definitions on the expanded lattice. Consequently, run length, dependence size and zone
+size remain integer-valued matrix axes, but they are expressed in isotropic physical subcells rather than anisotropic
+index voxels. This design preserves standard descriptor semantics more closely than fractional distance weighting,
+while allowing anisotropic voxel geometry to influence neighborhood-, run- and zone-based texture descriptors.
+
+\subsection{Limitations}
+
+This synthetic experiment verifies software behavior and activation of spacing-aware execution paths under controlled
+conditions. It does not assess clinical performance. The finite-volume approach is conservative with respect to matrix
+formulas, but it is still not the unmodified IBSI/PyRadiomics reference computation because matrix construction is
+performed on an expanded representation. Non-integer spacing ratios are rounded to integer repeat factors in the
+current prototype. Future pull-request preparation should document this explicitly, add unit tests for isotropic
+equivalence and anisotropic activation, and define a practical maximum expansion factor for large volumes.
+

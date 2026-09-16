@@ -1,0 +1,7 @@
+spacing_z,spacing_y,spacing_x,h,q_z,q_y,q_x,expansion_factor_R,represented_spacing_z,represented_spacing_y,represented_spacing_x,absolute_spacing_error_z,relative_spacing_error_z,spacing_label
+2.0,1.0,1.0,1.0,2,1,1,2,2.0,1.0,1.0,0.0,0.0,z2
+2.5,1.0,1.0,1.0,2,1,1,2,2.0,1.0,1.0,-0.5,-0.2,z2.5
+3.0,1.0,1.0,1.0,3,1,1,3,3.0,1.0,1.0,0.0,0.0,z3
+3.5,1.0,1.0,1.0,4,1,1,4,4.0,1.0,1.0,0.5,0.14285714285714285,z3.5
+5.0,1.0,1.0,1.0,5,1,1,5,5.0,1.0,1.0,0.0,0.0,z5
+5.5,1.0,1.0,1.0,6,1,1,6,6.0,1.0,1.0,0.5,0.09090909090909091,z5.5

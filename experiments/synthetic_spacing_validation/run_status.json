@@ -1,0 +1,117 @@
+{
+  "runs": [
+    {
+      "variant": "original_anisotropic",
+      "weightingNorm": "default",
+      "output_csv": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_original_anisotropic.csv",
+      "metadata_json": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_original_anisotropic_metadata.json",
+      "returncode": 0,
+      "ok": true,
+      "log": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_original_anisotropic.log"
+    },
+    {
+      "variant": "modified_default_anisotropic",
+      "weightingNorm": "default",
+      "output_csv": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_anisotropic.csv",
+      "metadata_json": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_anisotropic_metadata.json",
+      "returncode": 0,
+      "ok": true,
+      "log": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_anisotropic.log"
+    },
+    {
+      "variant": "modified_voxelSpacing_anisotropic",
+      "weightingNorm": "voxelSpacing",
+      "output_csv": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_anisotropic.csv",
+      "metadata_json": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_anisotropic_metadata.json",
+      "returncode": 0,
+      "ok": true,
+      "log": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_anisotropic.log"
+    },
+    {
+      "variant": "modified_default_isotropic",
+      "weightingNorm": "default",
+      "output_csv": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_isotropic.csv",
+      "metadata_json": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_isotropic_metadata.json",
+      "returncode": 0,
+      "ok": true,
+      "log": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_default_isotropic.log"
+    },
+    {
+      "variant": "modified_voxelSpacing_isotropic",
+      "weightingNorm": "voxelSpacing",
+      "output_csv": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_isotropic.csv",
+      "metadata_json": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_isotropic_metadata.json",
+      "returncode": 0,
+      "ok": true,
+      "log": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/features_modified_voxelSpacing_isotropic.log"
+    }
+  ],
+  "backward_compatibility": [
+    {
+      "check": "original anisotropic vs modified default anisotropic",
+      "n_features_compared": 75,
+      "mean_abs_difference": 0.0,
+      "max_abs_difference": 0.0,
+      "n_changed_strict": 0,
+      "n_changed_abs_1e_5": 0
+    }
+  ],
+  "activation_by_family": [
+    {
+      "family": "glcm",
+      "n_features": 24,
+      "n_changed_strict": 24,
+      "n_changed_abs_1e_5": 24,
+      "median_abs_difference": 0.09579959322967535,
+      "median_relative_difference": 0.10104636840589834,
+      "max_abs_difference": 23.255705349301763
+    },
+    {
+      "family": "gldm",
+      "n_features": 14,
+      "n_changed_strict": 11,
+      "n_changed_abs_1e_5": 11,
+      "median_abs_difference": 0.11781879365350799,
+      "median_relative_difference": 0.49100312248404315,
+      "max_abs_difference": 4732.068287037037
+    },
+    {
+      "family": "glrlm",
+      "n_features": 16,
+      "n_changed_strict": 16,
+      "n_changed_abs_1e_5": 16,
+      "median_abs_difference": 0.46866911762888863,
+      "median_relative_difference": 0.2609698286942747,
+      "max_abs_difference": 1979.0682080931292
+    },
+    {
+      "family": "glszm",
+      "n_features": 16,
+      "n_changed_strict": 8,
+      "n_changed_abs_1e_5": 8,
+      "median_abs_difference": 0.0020717893638132,
+      "median_relative_difference": 0.40000000000000097,
+      "max_abs_difference": 15803038.0
+    },
+    {
+      "family": "ngtdm",
+      "n_features": 5,
+      "n_changed_strict": 5,
+      "n_changed_abs_1e_5": 5,
+      "median_abs_difference": 0.022053036820142702,
+      "median_relative_difference": 0.33572643376604616,
+      "max_abs_difference": 9.28953911745661
+    }
+  ],
+  "isotropic_consistency": [
+    {
+      "check": "modified default isotropic vs modified voxelSpacing isotropic",
+      "n_features_compared": 75,
+      "mean_abs_difference": 0.0,
+      "max_abs_difference": 0.0,
+      "n_changed_strict": 0,
+      "n_changed_abs_1e_5": 0
+    }
+  ],
+  "report": "<REPOSITORY_ROOT>/experiments/synthetic_spacing_validation/report_synthetic_spacing_validation.tex"
+}
