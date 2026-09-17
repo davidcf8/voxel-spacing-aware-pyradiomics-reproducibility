@@ -1,5 +1,7 @@
 .DS_Store
 __pycache__/
+tests/__pycache__/
+.pytest_cache/
 *.pyc
 *.pyo
 *.so
@@ -17,4 +19,10 @@ results/rerun/
 results/reproduction_environment.json
 *.log
 manuscript/
-manuscript/
+*.tex
+*.aux
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz

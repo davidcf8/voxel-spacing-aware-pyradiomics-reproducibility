@@ -1,66 +1,76 @@
-# A Voxel-Spacing-Aware Extension of PyRadiomics for Anisotropic Texture Analysis
+# Voxel-Spacing-Aware PyRadiomics Reproducibility Repository
 
-This repository accompanies the technical implementation manuscript. It reproduces the synthetic phantom and software-validation analyses from already generated local outputs, not from clinical CT/MRI cohorts.
+This repository contains the implementation snapshot and reproducibility material supporting the technical study "A Voxel-Spacing-Aware Extension of PyRadiomics for Anisotropic Texture Analysis".
 
-The repository is intentionally separate from the clinical-study material and from the upstream PyRadiomics pull-request preparation. It contains synthetic phantoms, validation result tables, figures, manuscript source, and a clean VS-only PyRadiomics implementation snapshot for inspection.
+## Scope
 
-## What Is Included
+The repository focuses on software validation using synthetic phantoms. It does not contain clinical CT or MRI data, private cohort data, or raw patient images. The voxel-spacing-aware functionality is an opt-in methodological extension to PyRadiomics. Outputs from this mode should not be interpreted as conventional IBSI reference values.
 
-- Synthetic spacing validation: backward compatibility, isotropic equivalence, and anisotropic activation.
-- Finite-volume rounding sensitivity: integer repeat-factor geometry and feature sensitivity.
-- Discretization/binWidth sensitivity.
-- Native versus nearest-neighbor, linear, B-spline and voxelSpacing comparison.
-- Computational profiling on synthetic volumes.
-- Manuscript LaTeX/PDF and figures.
-- Clean `implementation/radiomics` snapshot without unrelated experimental preprocessing branches.
+## Implemented Approach
 
-## What Is Not Included
+The included implementation snapshot adds spacing-aware behavior to selected texture families:
 
-- No clinical CT/MRI patient cohort data.
-- No private external cohort data.
-- No raw patient images.
-- No unrelated experimental preprocessing branch material.
-- No claim of formal IBSI compliance for voxelSpacing output.
-- No claim of physical-ground-truth phantom validation or clinical superiority.
+- GLCM: anisotropy-relative feature-level angular aggregation.
+- NGTDM: anisotropy-relative weighted neighborhood mean.
+- GLRLM, GLDM, and GLSZM: finite-volume zero-order-hold representation on an expanded lattice.
 
-## Quick Reproduction
+For the finite-volume paths, discretized gray levels are replicated into isotropic subcells rather than interpolated. This does not generate interpolated gray levels, but it changes the computational lattice and should not be described as preserving native voxel topology. The current spacing-aware implementation uses NumPy array order `(z, y, x)`, SimpleITK spacing order `(x, y, z)`, and maps spacing with `GetSpacing()[::-1]`. The SimpleITK direction matrix is not incorporated in the spacing-aware calculations.
 
-Create an environment with the packages in `requirements.txt`, then run:
+All validation experiments are fully 3D with `force2D=False`.
+
+## Repository Structure
+
+```text
+AUDIT/                                  Audit and provenance notes
+experiments/                            Synthetic phantoms, scripts, figures, and frozen outputs
+implementation/radiomics/               Frozen voxel-spacing-aware PyRadiomics implementation snapshot
+parameter_examples/                     Example parameter files
+results/                                Frozen machine-readable validation summaries
+scripts/                                Supporting scripts, where present
+tests/                                  Dedicated synthetic tests
+reproduce_paper.py                      Lightweight published-output verification
+rerun_experiments.py                    End-to-end local regeneration workflow
+requirements.txt                        Lightweight verification dependencies
+requirements-repro.txt                  End-to-end build and regeneration dependencies
+```
+
+No manuscript source or submission drafting files are included in this release copy.
+
+## Reproduction Levels
+
+### Lightweight Verification
 
 ```bash
 python reproduce_paper.py
 ```
 
-This validates the manuscript key numerical results from the included CSV/JSON outputs and writes:
+This checks the frozen machine-readable outputs and reported validation quantities. It writes local verification artifacts under `reproduced_results/`, which is ignored by Git.
+
+Expected final line:
 
 ```text
-reproduced_results/REPRODUCIBILITY_REPORT.md
-reproduced_results/reproducibility_checks.csv
+Overall status: PASS
 ```
 
-This is the lightweight published-output verification workflow. It verifies the manuscript numbers against the frozen machine-readable CSV/JSON outputs included in the repository.
-
-## End-to-End Regeneration
-
-For full local regeneration from the included synthetic NIfTI phantoms, install the reproducibility dependencies and run:
+### End-to-End Reproduction
 
 ```bash
 python -m pip install -r requirements-repro.txt
 python rerun_experiments.py
 ```
 
-This workflow:
+The end-to-end workflow:
 
-- reconstructs the upstream PyRadiomics source tree at commit `8ed579383b44806651c463d5e691f3b2b57522ab`;
-- overlays only the local paper implementation from `implementation/radiomics/`;
-- builds the compiled `_cmatrices` and `_cshape` extensions in `.repro_build/`;
-- verifies that imports come from the local reproduction build;
-- reruns the synthetic experiments from `.nii.gz` phantoms;
+- reconstructs upstream PyRadiomics at commit `8ed579383b44806651c463d5e691f3b2b57522ab`;
+- overlays the included `implementation/radiomics/` snapshot;
+- builds the local compiled extension modules;
+- verifies that `radiomics` and `_cmatrices` are loaded from the local reproduction build;
+- reruns the experiments from the included synthetic NIfTI inputs;
 - writes regenerated outputs under `results/rerun/`;
 - compares regenerated outputs with the frozen published outputs;
-- runs `python reproduce_paper.py` as the final published-result verification.
+- runs the lightweight verification workflow.
 
-Expected final output:
+Expected final lines:
 
 ```text
 End-to-end rerun: PASS
@@ -78,39 +88,44 @@ python rerun_experiments.py --run-upstream-tests
 python rerun_experiments.py --verbose
 ```
 
-The default runner first looks for a local PyRadiomics source tree containing the required commit. If unavailable, it attempts to clone the official upstream repository and checks out the exact commit. The separate upstream PR-preparation repository is not required and should not be used for this workflow.
+Generated build and rerun outputs are local artifacts and are intentionally ignored by Git.
 
-`results/rerun/`, `.repro_build/`, `.repro_pyradiomics/`, and `results/reproduction_environment.json` are generated local artifacts and are intentionally ignored by Git because they contain machine-specific build paths.
+## Validation Summary
 
-## Repository Layout
+The frozen outputs support the following validation results:
 
-```text
-experiments/
-  synthetic_spacing_validation/
-  finite_volume_rounding_sensitivity/
-  binning_sensitivity/
-  resampling_baseline_comparison/
-  computational_profiling/
-implementation/radiomics/
-manuscript/
-parameter_examples/
-results/
-tests/
-AUDIT/
-reproduce_paper.py
-rerun_experiments.py
-```
-
-## Expected Key Results
-
-- Default compatibility: 75 features, max absolute difference 0.
-- Isotropic equivalence: 75 features, max absolute difference 0.
+- Clean upstream suite in the reconstructed release tree: 3563 / 3563 tests passed.
+- Default compatibility: 75 texture features, 0 classified as changed, mean absolute difference `8.08e-16`, maximum absolute difference `5.68e-14`.
+- Isotropic equivalence: exact equivalence across 75 texture features.
 - Anisotropic activation medians: GLCM 10.1%, GLRLM 26.1%, NGTDM 33.6%, GLDM 49.1%, GLSZM 40.0%.
-- Rounding: 2.5:1:1 gives `q_z=2`, error -20.0%; 3.5:1:1 gives `q_z=4`, error +14.3%.
-- Binning: binWidth 5, 10, 25, 50; median relative difference versus native 14.5% to 23.3%.
-- Resampling comparison: nearest 192/225 changed, linear 225/225, B-spline 225/225, voxelSpacing 192/225.
-- Profiling: volumes 16x64x64, 32x96x96, 48x128x128; expansion factors R=1,2,3,5,7; maximum runtime below 1.75 s in the included run.
+- GLDM and GLSZM changed-feature counts: 11/14 and 8/16, respectively.
+- Finite-volume rounding sensitivity: `2.5:1:1` gives `q_z=2` and -20.0% through-plane representation error; `3.5:1:1` gives `q_z=4` and +14.3%.
+- Rounding sensitivity summary: largest family-level median relative feature difference 0.167 for GLSZM; lowest Spearman correlation 0.900 for NGTDM.
+- Discretization sensitivity: binWidth values 5, 10, 25, and 50; median relative difference versus native 14.5% to 23.3%; Spearman correlation 0.973 to 0.982.
+- Resampling comparison: nearest-neighbor 192/225 changed, linear 225/225, B-spline 225/225, voxelSpacing 192/225.
+- Resampling median-of-family-medians: nearest-neighbor 0.333, linear 0.304, B-spline 0.302, voxelSpacing 0.307.
+- Computational profiling: synthetic native volumes 16x64x64, 32x96x96, and 48x128x128; ROI sizes 12,126, 50,328, and 139,028; expansion factors R=1,2,3,5,7. The most demanding validated geometry uses spacing `0.7:0.7:5.0`, `q=(1,1,7)`, expanded shape `48x128x896`, and expanded ROI 973,196.
+
+Runtime and memory measurements are machine-dependent. The frozen profiling outputs remain included as reference results for the tested environment.
+
+## Requirements
+
+Use `requirements.txt` for the lightweight verification workflow. Use `requirements-repro.txt` for the end-to-end workflow, which rebuilds the local PyRadiomics extension. The validated development environment used Python 3.10.9 with NumPy 2.2.6, SimpleITK 2.5.5, and pytest 8.4.2. Other platforms may produce different runtime or memory measurements.
 
 ## Citation
 
-A Voxel-Spacing-Aware Extension of PyRadiomics for Anisotropic Texture Analysis. arXiv identifier/DOI pending.
+Citation metadata are provided in `CITATION.cff`. A DOI will be added after archival of the `v1.0.0-paper` release.
+
+## License
+
+See `LICENSE`. This repository includes PyRadiomics-derived implementation material and preserves the licensing terms provided in the release copy.
+
+## Limitations
+
+- Finite-volume representation uses integer repeat factors.
+- Non-integer spacing ratios are rounded, which introduces a quantified representation error.
+- Expansion can increase memory requirements.
+- The library-level safeguard limits the expansion factor R, not absolute expanded voxel count.
+- The SimpleITK direction matrix is not incorporated in the current spacing-aware paths.
+- Validation is synthetic software validation, not clinical validation.
+- No independent IBSI benchmark is claimed for voxelSpacing mode.

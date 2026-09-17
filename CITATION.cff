@@ -1,8 +1,26 @@
 cff-version: 1.2.0
-title: "A Voxel-Spacing-Aware Extension of PyRadiomics for Anisotropic Texture Analysis"
-message: "If you use this repository, please cite the accompanying manuscript."
+title: "Voxel-Spacing-Aware PyRadiomics Reproducibility Repository"
+message: "If you use this repository, please cite the associated technical study and this software archive."
 type: software
+version: "1.0.0-paper"
 authors:
-  - family-names: "Corral-Fontecha"
-    given-names: "David"
-repository-code: "https://github.com/TO_BE_FILLED/voxel-spacing-aware-pyradiomics-technical"
+  - given-names: "David"
+    family-names: "Corral Fontecha"
+  - given-names: "Juan"
+    family-names: "Miranda Bautista"
+  - given-names: "Pablo"
+    family-names: "Menéndez Fernández-Miranda"
+  - given-names: "Andrea"
+    family-names: "Trapote Fernández"
+  - given-names: "Lara"
+    family-names: "Lloret Iglesias"
+  - given-names: "José A."
+    family-names: "Vega"
+keywords:
+  - radiomics
+  - PyRadiomics
+  - voxel spacing
+  - texture analysis
+  - reproducibility
+license: "BSD-3-Clause"
+abstract: "Implementation snapshot, synthetic phantoms, frozen outputs, and reproducibility workflows for the technical study A Voxel-Spacing-Aware Extension of PyRadiomics for Anisotropic Texture Analysis."
