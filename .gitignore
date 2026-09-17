@@ -16,3 +16,4 @@ reproduced_results/
 results/rerun/
 results/reproduction_environment.json
 *.log
+manuscript/
